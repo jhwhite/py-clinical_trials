@@ -1,0 +1,63 @@
+{% extends "layout.html" %}
+{% block title %}{{ super() }} | Search Help {% endblock %}
+
+{% block content %}
+
+{% include 'search_bar.html' %}
+
+<h1>Search Help</h1>
+<hr>
+<div class="row">
+    <div class="col-md-12">
+        <h5>Default Search</h5>
+        <p>The default search is an 'OR' search. Which means if you search for 'lung cancer' your results will include trials that have 'lung' referenced in them and trials that have cancer referenced in them.</p>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <h5>Boolean Searches</h5>
+        <table class="table">
+            <tr>
+                <th>Operator</th>
+                <th>Description</th>
+                <th>Example</th>
+            </tr>
+            <tr>
+                <td>AND</td>
+                <td>Returns results where all search terms occur in the trial.</td>
+                <td>'lung AND cancer' will return occurences where both the terms occur in the trial.</td>
+            </tr>
+            <tr>
+                <td>OR</td>
+                <td>This is also the default search. 'lung OR cancer' is the same as 'lung cancer'.</td>
+                <td>Returns results that have 'lung' in the trial as well as results that have'cancer' in the trial.</td>
+            </tr>
+            <tr>
+                <td>NOT</td>
+                <td>Returns results where the term after NOT cannot be in the trial to be included in the results.</td>
+                <td>'lung NOT cancer' will return occurences where 'lung' is in the trial as long as 'cancer' is not.</td>
+            </tr>
+        </table>
+        <h5>Wildcard Searches</h5>
+        <table class="table">
+            <tr>
+                <th>Operator</th>
+                <th>Description</th>
+                <th>Example</th>
+            </tr>
+            <tr>
+                <td>?</td>
+                <td>One wildcard character</td>
+                <td>te?t returns results that include the term 'test' and 'text'</td>
+            </tr>
+            <tr>
+                <td>*</td>
+                <td>Any number of wildcard characters</td>
+                <td>test* returns test, testing, tester, testers</td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+
+{% endblock %}

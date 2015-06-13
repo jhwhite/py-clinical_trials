@@ -1,0 +1,59 @@
+{% extends "layout.html" %}
+{% block title %}{{ super() }} | INSERT {% endblock %}
+
+{% block content %}
+
+<div>
+
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <h1>{{ results['_source']['official_title'] }}</h1>
+        <p>{{ results['_source']['date'] }}</p>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="{{ alert }}">This clinical trial is {{ results['_source']['overall_status'] }}</div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="tabbable">
+            <ul class="nav nav-tabs nav-justified" data-tabs="tabs">
+                <li class="presentation active"><a href="#description" data-toggle="tab">Description</a></li>
+                <li class="presentation"><a href="#eligibility" data-toggle="tab">Eligibility</a></li>
+            </ul>
+
+            <div class="tab-content">
+                <div class="tab-pane fade in active" id="description">
+                    {{ results['_source']['detailed_description'] | nl2br }}
+                </div>
+                <div class="tab-pane fade" id="eligibility">
+                    <br />
+                    <p><strong>Gender:</strong> {{ results['_source']['gender'] }}</p>
+                    <p><strong>Minimum age:</strong> {{ results['_source']['minimum_age'] }}</p>
+                    <p><strong>Maximum age:</strong> {{ results['_source']['maximum_age'] }}</p>
+                    <p><strong>Accepts healthy volunteers: </strong>{{ results['_source']['healthy_volunteers'] }}</p>
+                    <p><strong>Eligibilty Description:</strong>{{ results['_source']['eligibility'] | nl2br }}</p>
+                </div>
+              <!--<div class="tab-pane" id="settings">...</div>-->
+            </div>
+        </div><!-- end tabbable -->
+    </div>
+    <!--
+    <div class="col-md-4">
+        <div class="well">
+            <h2>Contact Information</h2>
+            <p>Contact name: {{ results['_source']['name'] }}</p>
+            <p>Facility: {{ results['_source']['facility'] }}</p>
+            <p>Contact email: {{ results['_source']['email_address'] }}</p>
+            <p>Contact phone: {{ results['_source']['phone_number'] }}</p>
+            <p><a href="{{ results['_source']['link'] }}">Link to the current ClinicalTrials.gov record</a></p>
+        </div>
+    </div>-->
+</div>
+
+{% endblock %}

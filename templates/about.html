@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+{% block title %}{{ super() }} | About {% endblock %}
+
+{% block content %}
+
+<h1>About</h1>
+<hr>
+<p>
+    The clinical trials on this site comes from <a href="http://www.clinicaltrials.gov">clinicaltrials.gov</a>. 
+</p>
+<p>
+    To ensure we are in accordance with the <a href="https://www.clinicaltrials.gov/ct2/about-site/terms-conditions">Terms & Conditions</a> of clinicaltrials.gov we do the following:
+    <ul>
+        <li>The page for each trial gives a link to the corresponding trial on clinicaltrials.gov.</li>
+        <li>The information on this site is updated daily.</li>
+        <li>Each trial lists the date that ClinicalTrials processed the data.</li>
+        <li>We do not make any modifications to the data.</li>
+    </ul>
+</p>
+<p>
+    We do not assert any proprietary rights to any portion of the database, or represent the database or any part thereof to anyone as other than a United States Government database.
+</p>
+<p>
+    We do not use any email addresses extracted from our database for marketing or other promotional purposes.
+</p>
+{% endblock %}
