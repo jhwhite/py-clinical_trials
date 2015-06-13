@@ -113,7 +113,10 @@ for file in dirs:
     healthy = root.find("eligibility/healthy_volunteers")
     if healthy is not None:
         hv = root.find("eligibility/healthy_volunteers").text
+        if hv != "No":
+            hv = "Yes"
         #hv = strip_newlines(hv)
+        print(hv)
     else:
         hv = "No information about healthy volunteers provided"
     #print( "healthy volunteers: " + hv)
