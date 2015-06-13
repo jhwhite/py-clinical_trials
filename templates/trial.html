@@ -29,7 +29,11 @@
 
             <div class="tab-content">
                 <div class="tab-pane fade in active" id="description">
+                    {% if results['_source']['detailed_description'] != "No detailed description provided" %}
                     {{ results['_source']['detailed_description'] | nl2br }}
+                    {% else %}
+                    {{ results['_source']['brief_summary'] | nl2br }}
+                    {% endif %}
                 </div>
                 <div class="tab-pane fade" id="eligibility">
                     <br />
