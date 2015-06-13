@@ -36,7 +36,8 @@
 
         <div class="well"> 
             <a href="{{ url_for('trial', id=results['hits']['hits'][i]['_id']) }}">{{ results['hits']['hits'][i]['_source']['official_title'] }} </a><br />
-            <strong>Principal Investigator:</strong> {{ results['hits']['hits'][i]['_source']['principal_investigator'] }}
+            <strong>Principal Investigator:</strong> {{ results['hits']['hits'][i]['_source']['principal_investigator'] }}<br />
+            <strong>Facility:</strong> {{ results['hits']['hits'][i]['_source']['facility'] }}
         </div>
 
         {% endfor %}
