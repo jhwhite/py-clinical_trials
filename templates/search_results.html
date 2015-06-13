@@ -4,17 +4,28 @@
 {% block content %}
 {% include 'search_bar.html' %}
 
-<h4>
-    <strong>{{ num_hits }}</strong> results for <strong>{{ query }}</strong>
-</h4>
 
-{% for i in range(results['hits']['hits'] | length): %}
+<div class="row">
+    <div class="col-md-3">
+        <h4>Filters</h4>
+        <div class="well">
 
-    <div class="well"> 
-        <a href="{{ url_for('trial', id=results['hits']['hits'][i]['_id']) }}">{{ results['hits']['hits'][i]['_source']['official_title'] }} </a><br />
-        <strong>Principal Investigator:</strong> {{ results['hits']['hits'][i]['_source']['principal_investigator'] }}
+        </div>
     </div>
 
-{% endfor %}
+    <div class="col-md-9">
+        <h4>
+            <strong>{{ num_hits }}</strong> results for <strong>{{ query }}</strong>
+        </h4>
+        {% for i in range(results['hits']['hits'] | length): %}
+
+        <div class="well"> 
+            <a href="{{ url_for('trial', id=results['hits']['hits'][i]['_id']) }}">{{ results['hits']['hits'][i]['_source']['official_title'] }} </a><br />
+            <strong>Principal Investigator:</strong> {{ results['hits']['hits'][i]['_source']['principal_investigator'] }}
+        </div>
+
+        {% endfor %}
+    </div>
 
 {% endblock %}
+</div>
