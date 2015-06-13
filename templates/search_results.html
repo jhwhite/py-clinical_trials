@@ -9,7 +9,13 @@
     <div class="col-md-3">
         <h4>Filters</h4>
         <div class="well">
+            <h5>Accepts Healthy Volunteers:</h5>
+            <ul class="list-unstyled">
+            {% for i in range(results['facets']['healthy_volunteers']['terms'] | length): %}
+            <li>{{ results['facets']['healthy_volunteers']['terms'][i]['term'] | capitalize }}: {{ results['facets']['healthy_volunteers']['terms'][i]['count'] }}</li>
 
+            {% endfor %}
+            </ul>
         </div>
     </div>
 
