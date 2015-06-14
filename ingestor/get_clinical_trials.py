@@ -17,11 +17,17 @@ def strip_extra_spaces(strings):
 # Let's connect to Elasticsearch!
 es = Elasticsearch()
 
+# Set the path to where the unzipped trials will be placed. 
+path = '/Users/jhwhite/python-projects/py-clinical_trials/search_results/'
+
+for f in os.listdir(path):
+    os.unlink( path + f)
+
 # Delete the index each time because some trials will be removed and I don't want to display trials that may not be available anymore. But, if the status changes, then the document will be udpated accordingly. Correct? Or is this still just safer?
-es.indices.delete(index="clinical_trials")
+#es.indices.delete(index="clinical_trials")
 
 # Downloading the zip file using urllib.
-remote_file = urllib.request.urlretrieve('https://www.clinicaltrials.gov/ct2/results?term=&recr=Recruiting&rslt=&type=&cond=&intr=&titles=&outc=&spons=&lead=&id=&state1=&cntry1=&state2=&cntry2=&state3=&cntry3=&locn=charlottesville&gndr=&rcv_s=&rcv_e=&lup_s=&lup_e=&studyxml=true', "/Users/jhwhite/python-projects/py-clinical_trials/search_result.zip")
+remote_file = urllib.request.urlretrieve('http://clinicaltrials.gov/ct2/results?term=&recr=Recruiting&rslt=&type=&cond=&intr=&titles=&outc=&spons=&lead=&id=&state1=&cntry1=&state2=&cntry2=&state3=&cntry3=&locn="university+of+virginia"&gndr=&rcv_s=&rcv_e=&lup_s=&lup_e&studyxml=true', "/Users/jhwhite/python-projects/py-clinical_trials/search_result.zip")
 
 
 # Set the path to where the unzipped trials will be placed. 
@@ -116,6 +122,7 @@ for file in dirs:
         if hv != "No":
             hv = "Yes"
         #hv = strip_newlines(hv)
+        print(hv)
     else:
         hv = "No information about healthy volunteers provided"
     #print( "healthy volunteers: " + hv)
