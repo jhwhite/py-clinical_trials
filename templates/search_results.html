@@ -4,17 +4,44 @@
 {% block content %}
 {% include 'search_bar.html' %}
 
-<h4>
-    <strong>{{ num_hits }}</strong> results for <strong>{{ query }}</strong>
-</h4>
 
-{% for i in range(results['hits']['hits'] | length): %}
+<div class="row">
+    <div class="col-md-3">
+        <h4>Filters</h4>
+        <div class="well">
+            <h5>Accepts Healthy Volunteers:</h5>
+            <ul class="list-unstyled">
+                {% for i in range(results['aggregations']['healthy_volunteer']['buckets'] | length): %}
 
-    <div class="well"> 
-        <a href="{{ url_for('trial', id=results['hits']['hits'][i]['_id']) }}">{{ results['hits']['hits'][i]['_source']['official_title'] }} </a><br />
-        <strong>Principal Investigator:</strong> {{ results['hits']['hits'][i]['_source']['principal_investigator'] }}
+                    <li>{{ results['aggregations']['healthy_volunteer']['buckets'][i]['key'] | capitalize }}: <span class="pull-right">{{ results['aggregations']['healthy_volunteer']['buckets'][i]['doc_count'] }} </span></li>
+
+                {% endfor %}
+            </ul>
+            <h5>Gender</h5>
+            <ul class="list-unstyled">
+                {% for i in range(results['aggregations']['gender']['buckets'] | length): %}
+
+                    <li>{{ results['aggregations']['gender']['buckets'][i]['key'] | capitalize }}: <span class="pull-right">{{ results['aggregations']['gender']['buckets'][i]['doc_count'] }}</span></li>
+                    
+                {% endfor %}
+            </ul>
+        </div>
     </div>
 
-{% endfor %}
+    <div class="col-md-9">
+        <h4>
+            <strong>{{ num_hits }}</strong> results for <strong>{{ query }}</strong>
+        </h4>
+        {% for i in range(results['hits']['hits'] | length): %}
+
+        <div class="well"> 
+            <a href="{{ url_for('trial', id=results['hits']['hits'][i]['_id']) }}">{{ results['hits']['hits'][i]['_source']['official_title'] }} </a><br />
+            <strong>Principal Investigator:</strong> {{ results['hits']['hits'][i]['_source']['principal_investigator'] }}<br />
+            <strong>Facility:</strong> {{ results['hits']['hits'][i]['_source']['facility'] }}
+        </div>
+
+        {% endfor %}
+    </div>
 
 {% endblock %}
+</div>

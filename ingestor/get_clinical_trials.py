@@ -2,6 +2,34 @@ import os, zipfile, urllib.request
 from elasticsearch import Elasticsearch
 import xml.etree.ElementTree as ET
 
+mapping = {
+    "trial": {
+        "properties": {
+            'brief_title': {"type" :"string"},
+            'official_title': {"type" :"string"},
+            'brief_summary': {"type" :"string"},
+            'detailed_description': {"type" :"string"},
+            'eligibility': {"type" :"string"},
+            'gender': {"type" :"string"},
+            'minimum_age': {"type" :"string"},
+            'maximum_age': {"type" :"string"},
+            'healthy_volunteers': {"type" :"string"},
+            'link': {"type" :"string"},
+            'keywords': {"type" :"string", "index": "not_analyzed"},
+            'overall_status': {"type" :"string"},
+            'city': {"type" :"string"},
+            'zip': {"type" :"string"},
+            'status': {"type" :"string"},
+            'name': {"type" :"string"},
+            'phone_number': {"type" :"string"},
+            'email_address': {"type" :"string"},
+            'facility': {"type" :"string"},
+            'date': {"type" :"string"},
+            'principal_investigator': {"type" :"string"}
+        }
+    }
+}
+
 # Function to put the keywords into a list. I want to call this an array. Will anyone really mind?
 def create_keyword_list(keywords):
     return keywords.split(',')
@@ -16,9 +44,17 @@ def strip_extra_spaces(strings):
 
 # Let's connect to Elasticsearch!
 es = Elasticsearch()
-
 # Delete the index each time because some trials will be removed and I don't want to display trials that may not be available anymore. But, if the status changes, then the document will be udpated accordingly. Correct? Or is this still just safer?
-#es.indices.delete(index="clinical_trials")
+es.indices.delete(index="clinical_trials")
+
+es.indices.create("clinical_trials")
+es.indices.put_mapping(index="clinical_trials", doc_type="trial", body=mapping)
+
+# Set the path to where the unzipped trials will be placed. 
+path = '/Users/jhwhite/python-projects/py-clinical_trials/search_results/'
+
+for f in os.listdir(path):
+    os.unlink( path + f)
 
 # Downloading the zip file using urllib.
 remote_file = urllib.request.urlretrieve('http://clinicaltrials.gov/ct2/results?term=&recr=Recruiting&rslt=&type=&cond=&intr=&titles=&outc=&spons=&lead=&id=&state1=&cntry1=&state2=&cntry2=&state3=&cntry3=&locn="university+of+virginia"&gndr=&rcv_s=&rcv_e=&lup_s=&lup_e&studyxml=true', "/Users/jhwhite/python-projects/py-clinical_trials/search_result.zip")
