@@ -57,8 +57,8 @@ def search_results(query):
 
         search = {
             "query":{
-                "match":{
-                    "_all": query
+                "query_string":{
+                    "query": query
                     }
                 },
                 "aggs":{
@@ -115,4 +115,4 @@ def trial(id):
     return render_template('trial.html', results=results, alert=alert)
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
