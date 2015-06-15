@@ -115,4 +115,4 @@ def trial(id):
     return render_template('trial.html', results=results, alert=alert)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()
