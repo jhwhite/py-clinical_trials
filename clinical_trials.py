@@ -35,9 +35,6 @@ def search(search_term):
     search_results = es.search(index=index, body={"query":{"match":{ "official_title": search_term}}}, size=500)
     return search_results
 
-# search query
-
-
 @app.route('/', methods=["GET", "POST"])
 def index():
     if request.method == 'POST':
@@ -55,27 +52,7 @@ def search_results(query):
         return redirect(url_for('search_results', query=search_term))
     if request.method == 'GET':
 
-        search = {
-            "query":{
-                "query_string":{
-                    "query": query
-                    }
-                },
-                "aggs":{
-                    "healthy_volunteer":{
-                        "terms":{
-                            "field":"healthy_volunteers"
-                        }
-                    },
-                    "gender":{
-                        "terms":{
-                            "field":"gender"
-                        }
-                    }
-                }
-            }
-
-        results = es.search(index="clinical_trials", body=search, size=500)
+        results = es.search(index="clinical_trials", body={"query":{"query_string":{"query": query}},"aggs":{"healthy_volunteer":{"terms":{"field":"healthy_volunteers"}},"gender":{"terms":{"field":"gender"}}}}, size=500)
         num_hits = results['hits']['total']
 
         return render_template('search_results.html', query=query, results=results, num_hits=num_hits)
