@@ -10,3 +10,7 @@ body {
 .copyright {
     text-align: center;
 }
+
+em {
+    background-color: yellow;
+}
