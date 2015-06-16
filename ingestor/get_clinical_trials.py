@@ -53,19 +53,15 @@ es.indices.put_mapping(index="clinical_trials", doc_type="trial", body=mapping)
 # Set the path to where the unzipped trials will be placed. 
 path = '/Users/jhwhite/python-projects/py-clinical_trials/search_results/'
 
+# Check to see if the path actually exists. If it doesn't, create it.
+if not os.path.exists(path):
+    os.makedirs(path)
+
 for f in os.listdir(path):
     os.unlink( path + f)
 
 # Downloading the zip file using urllib.
 remote_file = urllib.request.urlretrieve('http://clinicaltrials.gov/ct2/results?term=&recr=Recruiting&rslt=&type=&cond=&intr=&titles=&outc=&spons=&lead=&id=&state1=&cntry1=&state2=&cntry2=&state3=&cntry3=&locn="university+of+virginia"&gndr=&rcv_s=&rcv_e=&lup_s=&lup_e&studyxml=true', "/Users/jhwhite/python-projects/py-clinical_trials/search_result.zip")
-
-
-# Set the path to where the unzipped trials will be placed. 
-path = '/Users/jhwhite/python-projects/py-clinical_trials/search_results/'
-
-# Check to see if the path actually exists. If it doesn't, create it.
-if not os.path.exists(path):
-    os.makedirs(path)
 
 # Unzips the download and then puts the contents in the path from above
 z = zipfile.ZipFile('/Users/jhwhite/python-projects/py-clinical_trials/search_result.zip')
@@ -107,7 +103,7 @@ for file in dirs:
     if detailed_description is not None:
         dd = root.find("detailed_description")[0].text
 
-        #dd = strip_newlines(dd)
+        dd = strip_newlines(dd)
         #dd = strip_extra_spaces(dd)
     else:
         dd = "No detailed description provided"
@@ -116,7 +112,7 @@ for file in dirs:
     eligibility = root.find("eligibility/criteria/textblock")
     if eligibility is not None:
         e = root.find("eligibility/criteria/textblock").text
-        #e = strip_newlines(e)
+        e = strip_newlines(e)
         #e = strip_extra_spaces(e)
     else:
         e = "No eligibility provided"
