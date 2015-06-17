@@ -8,15 +8,6 @@ _paragraph_re = re.compile(r'(?:\r\n|\r|\n){2,}')
 
 app = Flask(__name__)
 
-@app.template_filter()
-@evalcontextfilter
-def nl2br(eval_ctx, value):
-    result = u'\n\n'.join(u'<p>%s</p>' % p.replace('\n', '<br>\n') \
-        for p in _paragraph_re.split(escape(value)))
-    if eval_ctx.autoescape:
-        result = Markup(result)
-    return result
-
 @app.errorhandler(500)
 def search_failed(e):
     return render_template('500.html'), 500
@@ -30,10 +21,19 @@ app.config.from_object('config')
 
 es = Elasticsearch()
 
-def search(search_term):
-    index = "clinical_trials"
-    search_results = es.search(index=index, body={"query":{"match":{ "official_title": search_term}}}, size=500)
-    return search_results
+results = {}
+
+def search(query):
+    search = es.search(index="clinical_trials", body={"query":{"query_string":{"query": query}},"aggs":{"healthy_volunteer":{"terms":{"field":"healthy_volunteers"}},"gender":{"terms":{"field":"gender"}}},"highlight": {"fields": {"official_title": {"number_of_fragments": 0},"detailed_description":{"number_of_fragments":0},"eligibility":{"number_of_fragments":0}}}}, size=500)
+    set_results(search)
+    return get_results()
+
+def set_results(search):
+    global results
+    results = search
+
+def get_results():
+    return results
 
 @app.route('/', methods=["GET", "POST"])
 def index():
@@ -51,11 +51,11 @@ def search_results(query):
 
         return redirect(url_for('search_results', query=search_term))
     if request.method == 'GET':
+        search_results = search(query)
+        
+        #num_hits = search_results['hits']['total']
 
-        results = es.search(index="clinical_trials", body={"query":{"query_string":{"query": query}},"aggs":{"healthy_volunteer":{"terms":{"field":"healthy_volunteers"}},"gender":{"terms":{"field":"gender"}}},"highlight": {"fields": {"official_title": {"number_of_fragments": 0}}}}, size=500)
-        num_hits = results['hits']['total']
-
-        return render_template('search_results.html', query=query, results=results, num_hits=num_hits)
+        return render_template('search_results.html', query=query, search_results=search_results)
 
 @app.route('/help', methods=['GET', 'POST'])
 def help():
@@ -76,9 +76,12 @@ def contact():
 
 @app.route('/trial/<id>')
 def trial(id):
-    results = es.get(index='clinical_trials', doc_type='trial', id=id)
+    trial_results = get_results()
 
-    overall_status = results['_source']['overall_status']
+    for i in range(len(trial_results['hits']['hits'])):
+        if trial_results['hits']['hits'][i]['_id'] == id:
+            trial = trial_results['hits']['hits'][i]
+            overall_status = trial_results['hits']['hits'][i]['_source']['overall_status']
 
     if overall_status == "Recruiting":
         alert = 'alert alert-success'
@@ -89,7 +92,7 @@ def trial(id):
     else:
         alert = 'alert alert-block'
 
-    return render_template('trial.html', results=results, alert=alert)
+    return render_template('trial.html', trial=trial, id=id, alert=alert)
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)

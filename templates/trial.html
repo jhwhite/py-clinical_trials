@@ -2,17 +2,26 @@
 {% block title %}{{ super() }} | INSERT {% endblock %}
 
 {% block content %}
-
 <div class="row">
     <div class="col-md-12">
-        <h1>{{ results['_source']['official_title'] }}</h1>
-        <p>{{ results['_source']['date'] }}</p>
-        <p><a href="{{ results['_source']['link'] }}">Link to the current ClinicalTrials.gov record</a></p>
+        <h1>
+            {% if trial['highlight'] | length > 0 %}
+                {% if trial['highlight']['official_title'] %}
+                    {{ trial['highlight']['official_title'][0] | safe }}
+                {% else %}
+                    {{ trial['_source']['official_title'] }}
+                {% endif %}
+            {% else %}
+                {{ trial['_source']['official_title'] }}
+            {% endif %}
+        </h1>
+        <p>{{ trial['_source']['date'] }}</p>
+        <p><a href="{{ trial['_source']['link'] }}">Link to the current ClinicalTrials.gov record</a></p>
     </div>
 </div>
 <div class="row">
     <div class="col-md-12">
-        <div class="{{ alert }}">This clinical trial is {{ results['_source']['overall_status'] }}</div>
+        <div class="{{ alert }}">This clinical trial is {{ trial['_source']['overall_status'] }}</div>
     </div>
 </div>
 
@@ -26,35 +35,42 @@
 
             <div class="tab-content">
                 <div class="tab-pane fade in active" id="description">
-                    {% if results['_source']['detailed_description'] != "No detailed description provided" %}
-                        {{ results['_source']['detailed_description'] | safe }}
+                    {% if trial['_source']['detailed_description'] != "No detailed description provided" %}
+                        {% if trial['highlight'] | length > 0 %}
+                            {% if trial['highlight']['detailed_description'] %}
+                                {{ trial['highlight']['detailed_description'][0] | safe }}
+                            {% endif %}
+                        {% else %}
+                            {{ trial['_source']['detailed_description'] | safe}}
+                        {% endif %}
                     {% else %}
-                        {{ results['_source']['brief_summary'] | safe }}
+                        {{ trial['_source']['brief_summary'] | safe }}
                     {% endif %}
+
                 </div>
                 <div class="tab-pane fade" id="eligibility">
                     <br />
-                    <p><strong>Gender:</strong> {{ results['_source']['gender'] }}</p>
-                    <p><strong>Minimum age:</strong> {{ results['_source']['minimum_age'] }}</p>
-                    <p><strong>Maximum age:</strong> {{ results['_source']['maximum_age'] }}</p>
-                    <p><strong>Accepts healthy volunteers: </strong>{{ results['_source']['healthy_volunteers'] }}</p>
-                    <p><strong>Eligibilty Description:</strong>{{ results['_source']['eligibility'] | safe }}</p>
+                    <p><strong>Gender:</strong> {{ trial['_source']['gender'] }}</p>
+                    <p><strong>Minimum age:</strong> {{ trial['_source']['minimum_age'] }}</p>
+                    <p><strong>Maximum age:</strong> {{ trial['_source']['maximum_age'] }}</p>
+                    <p><strong>Accepts healthy volunteers: </strong>{{ trial['_source']['healthy_volunteers'] }}</p>
+                    <p><strong>Eligibility Description:</strong>
+                    {% if trial['_source']['eligibility'] != "No detailed description provided" %}
+                        {% if trial['highlight'] | length > 0 %}
+                            {% if trial['highlight']['eligibility'] %}
+                                {{ trial['highlight']['eligibility'][0] | safe }}
+                            {% else %}
+                                {{ trial['_source']['eligibility'] |safe }}
+                            {% endif %}
+                        {% else %}
+                            {{ trial['_source']['eligibility'] |safe }}
+                        {% endif %}
+                    {% endif %}
+                    </p>
                 </div>
               <!--<div class="tab-pane" id="settings">...</div>-->
             </div>
         </div><!-- end tabbable -->
     </div>
-    <!--
-    <div class="col-md-4">
-        <div class="well">
-            <h2>Contact Information</h2>
-            <p>Contact name: {{ results['_source']['name'] }}</p>
-            <p>Facility: {{ results['_source']['facility'] }}</p>
-            <p>Contact email: {{ results['_source']['email_address'] }}</p>
-            <p>Contact phone: {{ results['_source']['phone_number'] }}</p>
-            <p><a href="{{ results['_source']['link'] }}">Link to the current ClinicalTrials.gov record</a></p>
-        </div>
-    </div>-->
 </div>
-
 {% endblock %}
