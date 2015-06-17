@@ -2,6 +2,7 @@
 {% block title %}{{ super() }} | INSERT {% endblock %}
 
 {% block content %}
+{{ trial }}
 <div class="row">
     <div class="col-md-12">
         <h1>
@@ -39,6 +40,8 @@
                         {% if trial['highlight'] | length > 0 %}
                             {% if trial['highlight']['detailed_description'] %}
                                 {{ trial['highlight']['detailed_description'][0] | safe }}
+                            {% else %}
+                                {{ trial['_source']['detailed_description'] | safe}}
                             {% endif %}
                         {% else %}
                             {{ trial['_source']['detailed_description'] | safe}}
