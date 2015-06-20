@@ -14,3 +14,8 @@ body {
 em {
     background-color: yellow;
 }
+
+.highlight {
+    background-color: transparent;
+    font-style: normal;
+}
