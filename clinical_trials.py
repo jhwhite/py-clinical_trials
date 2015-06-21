@@ -22,13 +22,24 @@ app.config.from_object('config')
 es = Elasticsearch()
 
 results = {}
+search_query = ""
 
-def search(query, healthy_volunteer_filter):
+def search(query, healthy_volunteer_filter, gender_filter):
+
     if(healthy_volunteer_filter != "none"):
         query = query + " AND healthy_volunteers:" + healthy_volunteer_filter
+    if(gender_filter != "none"):
+        query = query + " AND gender:" + gender_filter
     search = es.search(index="clinical_trials", body={"query":{"query_string":{"query": query}},"aggs":{"healthy_volunteer":{"terms":{"field":"healthy_volunteers"}},"gender":{"terms":{"field":"gender"}}},"highlight": {"fields": {"official_title": {"number_of_fragments": 0},"detailed_description":{"number_of_fragments":0},"eligibility":{"number_of_fragments":0}}}}, size=500)
     set_results(search)
     return get_results()
+
+def set_search_query(query):
+    global search_query
+    search_query = query
+
+def get_search_query():
+    return search_query
 
 def set_results(search):
     global results
@@ -49,12 +60,16 @@ def index():
 @app.route('/search_results/<query>', methods=['GET', 'POST'])
 def search_results(query):
     healthy_volunteer_filter = request.args.get("healthy_volunteer_filter", "none")
+    gender_filter = request.args.get("gender_filter", "none")
+    set_search_query(query)
+
+
     if request.method == 'POST':
         search_term = request.form['search']
 
         return redirect(url_for('search_results', query=search_term))
     if request.method == 'GET':
-        search_results = search(query, healthy_volunteer_filter)
+        search_results = search(query, healthy_volunteer_filter, gender_filter)
 
         return render_template('search_results.html', query=query, search_results=search_results)
 
