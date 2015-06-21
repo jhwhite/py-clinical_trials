@@ -13,7 +13,7 @@
             <ul class="list-unstyled">
                 {% for i in range(search_results['aggregations']['healthy_volunteer']['buckets'] | length): %}
 
-                    <li>{{ search_results['aggregations']['healthy_volunteer']['buckets'][i]['key'] | capitalize }}: <span class="pull-right">{{ search_results['aggregations']['healthy_volunteer']['buckets'][i]['doc_count'] }} </span></li>
+                    <li><a href="{{ url_for('search_results', query=query, healthy_volunteer_filter=search_results['aggregations']['healthy_volunteer']['buckets'][i]['key']) }}">{{ search_results['aggregations']['healthy_volunteer']['buckets'][i]['key'] | capitalize }}</a>: <span class="pull-right">{{ search_results['aggregations']['healthy_volunteer']['buckets'][i]['doc_count'] }} </span></li>
 
                 {% endfor %}
             </ul>

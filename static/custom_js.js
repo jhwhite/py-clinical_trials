@@ -1,6 +1,5 @@
 function toggleEmClass() {
     $( "em" ).toggleClass( "highlight" );
-
 }
 
 $(document).ready(function(){
@@ -11,6 +10,4 @@ $(document).ready(function(){
     $(".btn2").click(function(){
         $("p").slideDown();
     });
-
-
 });
