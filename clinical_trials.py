@@ -24,12 +24,14 @@ es = Elasticsearch()
 results = {}
 search_query = ""
 
-def search(query, healthy_volunteer_filter, gender_filter):
-
-    if(healthy_volunteer_filter != "none"):
+def search(healthy_volunteer_filter, gender_filter):
+    query = get_search_query()
+    if(healthy_volunteer_filter):
         query = query + " AND healthy_volunteers:" + healthy_volunteer_filter
-    if(gender_filter != "none"):
+        set_search_query(query)
+    if(gender_filter):
         query = query + " AND gender:" + gender_filter
+        set_search_query(query)
     search = es.search(index="clinical_trials", body={"query":{"query_string":{"query": query}},"aggs":{"healthy_volunteer":{"terms":{"field":"healthy_volunteers"}},"gender":{"terms":{"field":"gender"}}},"highlight": {"fields": {"official_title": {"number_of_fragments": 0},"detailed_description":{"number_of_fragments":0},"eligibility":{"number_of_fragments":0}}}}, size=500)
     set_results(search)
     return get_results()
@@ -52,6 +54,7 @@ def get_results():
 def index():
     if request.method == 'POST':
         search_term = request.form['search']
+        set_search_query(search_term)
 
         return redirect(url_for('search_results', query=search_term))
     if request.method == 'GET':
@@ -59,18 +62,17 @@ def index():
 
 @app.route('/search_results/<query>', methods=['GET', 'POST'])
 def search_results(query):
-    healthy_volunteer_filter = request.args.get("healthy_volunteer_filter", "none")
-    gender_filter = request.args.get("gender_filter", "none")
-    set_search_query(query)
-
+    healthy_volunteer_filter = request.args.get("healthy_volunteer_filter")
+    gender_filter = request.args.get("gender_filter")
 
     if request.method == 'POST':
         search_term = request.form['search']
+        set_search_query(query)
 
         return redirect(url_for('search_results', query=search_term))
     if request.method == 'GET':
-        search_results = search(query, healthy_volunteer_filter, gender_filter)
-
+        search_results = search(healthy_volunteer_filter, gender_filter)
+        
         return render_template('search_results.html', query=query, search_results=search_results)
 
 @app.route('/help', methods=['GET', 'POST'])
