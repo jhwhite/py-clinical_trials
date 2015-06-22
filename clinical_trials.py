@@ -67,12 +67,12 @@ def search_results(query):
 
     if request.method == 'POST':
         search_term = request.form['search']
-        set_search_query(query)
+        set_search_query(search_term)
 
         return redirect(url_for('search_results', query=search_term))
     if request.method == 'GET':
         search_results = search(healthy_volunteer_filter, gender_filter)
-        
+
         return render_template('search_results.html', query=query, search_results=search_results)
 
 @app.route('/help', methods=['GET', 'POST'])
