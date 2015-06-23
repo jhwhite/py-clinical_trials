@@ -79,6 +79,7 @@ def search_results(query):
 def help():
     if request.method == 'POST':
         search_term = request.form['search']
+        set_search_query(search_term)
 
         return redirect(url_for('search_results', query=search_term))
     if request.method == 'GET':
@@ -99,16 +100,16 @@ def trial(id):
     for i in range(len(trial_results['hits']['hits'])):
         if trial_results['hits']['hits'][i]['_id'] == id:
             trial = trial_results['hits']['hits'][i]
-            overall_status = trial_results['hits']['hits'][i]['_source']['overall_status']
+            overall_status = trial_results['hits']['hits'][i]['_source']['status']
 
     if overall_status == "Recruiting":
         alert = 'alert alert-success'
     elif overall_status == 'Active, not recruiting':
-        alert = 'alert alert-error'
+        alert = 'alert alert-warning'
     elif overall_status == 'Completed':
-        alert = 'alert alert-error'
+        alert = 'alert alert-warning'
     else:
-        alert = 'alert alert-block'
+        alert = 'alert alert-danger'
 
     return render_template('trial.html', trial=trial, id=id, alert=alert)
 
